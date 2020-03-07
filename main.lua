@@ -3,6 +3,7 @@
 anim8  = require "anim8"
 vector = require "vector"
 timer  = require "timer"
+lume   = require "lume"
 
 
 -- MAIN PLAYER TABLE 
@@ -26,19 +27,26 @@ Player = {
 	-- The associated image is stored here, [[This mah change to a reference to a master sprite sheet]]
 	anim_db = {
 			   walk={frames={col=4, row=1}, framerate=0.1, 
-					 w=20, h=20, on_loop=nil, image=nil, grid=nil},
+					 w=20, h=20, on_loop=nil,
+					 image=nil, grid=nil, tot_time=nil},
 	    ---------------------------------------------------
 	      explosion={frames={col=4, row=4}, framerate=0.08,
-	      			 w=52, h=52, on_loop="pauseAtEnd", image=nil,grid=nil},
+	      			 w=52, h=52, on_loop="pauseAtEnd", 
+	      			 image=nil,grid=nil, tot_time=nil},
 	    ---------------------------------------------------
-	      	 attack={frames={col=3, row=2}, framerate=0.1,
-	      			 w=44, h=44, on_loop="pauseAtEnd", image=nil,grid=nil}},
+	      	 attack={frames={col=2, row=3}, framerate=0.1,
+	      			 w=44, h=44, on_loop="pauseAtEnd", 
+	      			 image=nil, grid=nil, tot_time=nil}},
 		---------------------------------------------------
 	anim = {} --Stores the anim8 animtion instances of each different animation
 }
 
 function Player:loadAnimations()
 	for k, v in pairs(self.anim_db) do
+		--Calculate the time length of each animation
+		local frm = self.anim_db[k].frames
+		local frmrt = self.anim_db[k].framerate
+		self.anim_db[k].tot_time = frm.col * frm.row * frmrt
 		--Loads the spritesheet into love's working mem
 		self.anim_db[k].image = love.graphics.newImage(k .. ".png")
 		--Loads the atlas for the sprite sheet
@@ -53,6 +61,9 @@ function Player:loadAnimations()
 										  self.anim_db[k].framerate, 
 										  self.anim_db[k].on_loop)
 	end
+
+	self.anim["attack_r"] = self.anim["attack"]:clone():flipV()
+
 end
 
 --updates the curent frameset
@@ -102,28 +113,42 @@ end
 
 --Handles all attack logic
 function Player:fire(vec_in)
-   	self.last_attack = love.timer.getTime()
-   	self.can_attack = false
-	self.attack_rot = -vec_in:heading()  --this value needs to be inverted...for some reason....
-	self.anim["attack"]:gotoFrame(1)
-	self.anim["attack"]:resume()	
+   	self.last_attack = love.timer.getTime() -- start the attack delay timer
+   	self.can_attack = false                  
+	self.attack_rot = lume.round(-vec_in:heading(),.001)  --this value needs to be inverted...for some reason....
+	print(self.attack_rot)
+
+	if self.attack_rot == 45 then
+		self.anim["attack_r"]:gotoFrame(1)
+		self.anim["attack_r"]:resume()
+	else
+		--resets the animation to the begining and plays it
+		self.anim["attack"]:gotoFrame(1)
+		self.anim["attack"]:resume()
+	end
 end
 
---Outputs the animation to the screen good luck
+--Outputs the animation to the screen, good luck and read the docs
 function Player:show()
 	self.anim[self.state]:draw(self.anim_db[self.state].image,
 							   Player.pos.x, Player.pos.y, 
 							   Player.rot, Player.scale, Player.scale,
 							   8, 12)
+	local flip_v = 1
+	if self.attack_rot == 0 or math.abs(self.attack_rot) == 0.785 then
+		flip_v = -1
+	end
 	self.anim["attack"]:draw(self.anim_db["attack"].image,
 							 Player.pos.x, Player.pos.y,
 							 self.attack_rot
-							 , Player.scale,Player.scale
+							 , Player.scale, flip_v * Player.scale
 							 ,22,22)
+
 end
 
 
 
+-----------------------------------------------------------
 ----MAIN GAME LOGIC
 function love.load()
 	love.window.setMode(600,400)
