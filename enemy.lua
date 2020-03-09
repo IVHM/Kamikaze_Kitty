@@ -2,6 +2,7 @@
 anim8 = require "anim8"
 vector = require "vector"
 lume = require "lume"
+config = require "config"
 
 
 enemy_db = {}
@@ -46,19 +47,26 @@ function Enemy:new(o)
 	o = o or {}
 	setmetatable(o, self)
 	self.__index = self
-
+end
+--After the instance of the enemy is created 
+--Thsi sis used to intialize its values
+function Enemy:intialize(type,pos,dir,speed)
+	
 end
 
+
 -- Used to 
-function spawn_enemy(pos, type, speed)
+function spawn_enemy(random, pos, type, dir, speed)
 	crnt_index = crnt_index + 1
 	enemy_db[crnt_index] = Enemy:new({})
 
 end
 
 
-function update_enemies()
-	for k,v in pairs
+function update_enemies(dt)
+	for k,v in pairs(enemy_db) do
+		enemy_db[k].anim:update(dt)
+	end
 end
 
 

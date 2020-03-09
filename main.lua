@@ -1,12 +1,12 @@
 -- animation tests
 --libraries
 require("player")
-
+conifg require "config"
 -----------------------------------------------------------
 ----MAIN GAME LOGIC
 function love.load()
-	love.window.setMode(600,400)
-	love.graphics.setDefaultFilter("nearest","nearest")
+	love.window.setMode(config.screen.size.w,config.screen.size.h)
+	love.graphics.setDefaultFilter(config.screen.filter)
 	Player:loadAnimations()
 end
 
