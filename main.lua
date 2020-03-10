@@ -3,6 +3,7 @@
 require("player")
 require("enemy")
 require("config")
+require("collision")
 
 
 -----------------------------------------------------------

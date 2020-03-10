@@ -2,7 +2,8 @@
 anim8  = require "anim8"
 vector = require "vector"
 lume   = require "lume"
-config = require "config"
+require("config")
+require("collision")
 
 
 -- MAIN PLAYER TABLE 

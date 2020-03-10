@@ -3,6 +3,7 @@ anim8 = require "anim8"
 vector = require "vector"
 lume = require "lume"
 require("config")
+require("collision")
 
 
 enemy_db = {}
