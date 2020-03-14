@@ -34,4 +34,5 @@ function love.draw()
 	love.graphics.rectangle("fill",0,0,600,400)
 	Player:show()
 	draw_enemies()
+	col_objects:draw_collision_shapes()
 end

@@ -88,12 +88,16 @@ function Player:step(dt)
 	self:input_check()
 	self.pos = self.pos + (self.dir * self.speed * dt)
 	col_objects:move_object(self.col_ID, self.pos)
-	print("Checking player collisions")
 	local collisions = col_objects:get_collisions(self.col_ID)
-	print("player collisons returned: ",collisions)
 	if collisions ~= false then
 		for k,v in pairs(collisions) do
 			print("Player collisions "..k..": "..v)
+		end
+	end
+	local neighbors = col_objects:get_neighbors(self.col_ID)
+	if neighbors ~= false then
+		for k,v in pairs(neighbors) do
+			print("Player neighbors "..k.." : "..v)
 		end
 	end
 

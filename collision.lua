@@ -15,6 +15,7 @@ function col_objects:add_object(shape,info)
 			col_objects[crnt_ID] = HC.rectangle(info[1], info[2],
 											    info[3], info[4])
 			ID_out = crnt_ID
+			print("rectangle add to world at x:"..info[1].." y:"..info[2])
 		else
 			add_object_ERROR(shape,info,crnt_ID)
 			crnt_ID = crnt_ID -1
@@ -50,7 +51,7 @@ function add_object_ERROR(shape_in,info_in, crnt_ID_in)
 end
 
 function col_objects:get_collisions(object_ID)
-	local colisions_detected = HC.collisions(col_objects[object_ID])
+	local colisions_detected = HC.collisions(self[object_ID])
 	if #colisions_detected == 0 then
 		return false 
 	else
@@ -60,10 +61,27 @@ end
 
 
 function col_objects:move_object(ID_in, new_pos, new_rot)
-		self[ID_in]:moveTo(new_pos.x, new_pos.x)
+		self[ID_in]:moveTo(new_pos.x, new_pos.y)
 
 		if new_rot ~= nil then
 			self[ID_in]:rotate(new_rot)
 		end
 end
 
+function col_objects:get_neighbors(object_ID)
+	local neighbors = HC.neighbors(self[object_ID])
+	if #neighbors == 0 then
+		return false
+	else
+		return neighbors
+	end
+end
+
+function col_objects:draw_collision_shapes()
+	love.graphics.setColor(0,0,255)
+	for k,v in pairs(col_objects) do
+		if type(k) == "number" then
+			col_objects[k]:draw("line")
+		end
+	end
+end

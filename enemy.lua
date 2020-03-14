@@ -73,7 +73,7 @@ end
 function spawn_enemy()--implement once done testing(random, pos, type, dir, speed)
 	crnt_index = crnt_index + 1
 	local pos = vector(lume.random(0, screen.size.w),
-					   lume.random(0, screen.size.w))
+					   lume.random(0, screen.size.h))
 	local dir = vector(0,0)
 	local speed = 0
 
