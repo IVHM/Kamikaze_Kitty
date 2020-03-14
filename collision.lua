@@ -7,30 +7,36 @@ crnt_ID = 0
 
 function col_objects:add_object(shape,info)
 	crnt_ID = crnt_ID + 1
+	local ID_out
 	
 	--If new shape is rect info is x,y,w,h values
 	if shape == "rect" then
 		if #info == 4 then
 			col_objects[crnt_ID] = HC.rectangle(info[1], info[2],
-											info[3], info[4])
+											    info[3], info[4])
+			ID_out = crnt_ID
 		else
-			add_object_ERROR(info)
-			crnt_ID = crnt_ID -1 
+			add_object_ERROR(shape,info,crnt_ID)
+			crnt_ID = crnt_ID -1
+			ID_out = false 
 		end
+
 	--If new shape is a point info is x,y values
-	else if shape == "point" then
+	elseif shape == "point" then
 		if #info == 2 then
 			col_objects[crnt_ID] = HC.point(info[1],info[2])
+			ID_out = crnt_ID
 		else
 			add_object_ERROR(shape, info, crnt_ID)
 			crnt_ID = crnt_ID -1
+			ID_out = false
 		end
 	else 
 		print("unrecognized shape of :"..shape)
 	end
 
 	
-	return crnt_ID
+	return ID_out
 end
 
 -- Used to output debug error messages
@@ -53,4 +59,11 @@ function col_objects:get_collisions(object_ID)
 end
 
 
+function col_objects:move_object(ID_in, new_pos, new_rot)
+		self[ID_in]:moveTo(new_pos.x, new_pos.x)
+
+		if new_rot ~= nil then
+			self[ID_in]:rotate(new_rot)
+		end
+end
 

@@ -28,44 +28,15 @@ function init_enemy_anims()
 end
 
 
-
---[[
-ONCE SPAWING IS IN PLACE THEN WORK HERE
--- Grid used to store large scale enemy pos to ease 
--- collision calculation over head
-Grid = {
-	width = nil, height = nil, size =nil	
-}
-
-
-function make_grid(screen_width_in, screen_height_in, increment)
-	Grid.size = increment
-	Grid.width = math.ceil(screen_width_inc/increment)
-	Grid.height = math.ceil(screen_height_in/increment)
-  
-  	--intialize
-	for x in range(Grid.width) do 
-		table.insert(Grid, {})
-		for y in range(Grid.height) do 
-			table.insert(Grid[x], {})
-		end
-	end
-
-end
-
-function Grid:move_ID(new_index,old_index,ID_in)
-	Grid[new_index][new_index]
-
-end
-]]
-
+--ENEMY BASE CLASS
 
 Enemy = {
 
 	bug_type = nil,
 	pos = vector(0,0),
 	dir = vector(0,0),
-	speed = 0
+	speed = 0,
+	col_ID = nil
 
 }
 
@@ -91,6 +62,10 @@ function Enemy:intialize(type_in,pos,dir,speed)
 	local on_loop = enemy_anim_base[self.bug_type].on_loop
 													 
 	self.anim = anim8.newAnimation(grid, framerate, on_loop)
+	self.col_ID = col_objects:add_object("rect", {self.pos.x, self.pos.y, 
+										enemy_anim_base[self.bug_type].w,
+										enemy_anim_base[self.bug_type].h})
+	print(self.col_ID)
 end
 
 
@@ -104,7 +79,6 @@ function spawn_enemy()--implement once done testing(random, pos, type, dir, spee
 
 	
 	enemy_db[crnt_index] = Enemy:new()
-	print(enemy_db[crnt_index])
 	enemy_db[crnt_index]:intialize("bug_small", pos, dir, speed)
 
 end
@@ -113,6 +87,7 @@ end
 function update_enemies(dt)
 	for k,v in pairs(enemy_db) do
 		enemy_db[k].anim:update(dt)
+		--col_objects:move_object()
 	end
 end
 

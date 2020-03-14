@@ -15,6 +15,8 @@ Player = {
 	pos = vector(30,30),
 	dir = vector(1, 1),
 	speed = 200,
+	col_ID = nil,
+	offset = vector(8,12),
 
 	--ATTACK
 	can_attack = true,
@@ -40,6 +42,12 @@ Player = {
 		---------------------------------------------------
 	anim = {} --Stores the anim8 animtion instances of each different animation
 }
+
+function Player:col_init()
+	self.col_ID = col_objects:add_object("rect", {self.pos.x, self.pos.y,
+							  			 self.offset.x * 2, self.offset.y * 2})
+	print(self.col_ID)
+end
 
 function Player:loadAnimations()
 	for k, v in pairs(self.anim_db) do
@@ -79,7 +87,15 @@ function Player:step(dt)
 
 	self:input_check()
 	self.pos = self.pos + (self.dir * self.speed * dt)
-
+	col_objects:move_object(self.col_ID, self.pos)
+	print("Checking player collisions")
+	local collisions = col_objects:get_collisions(self.col_ID)
+	print("player collisons returned: ",collisions)
+	if collisions ~= false then
+		for k,v in pairs(collisions) do
+			print("Player collisions "..k..": "..v)
+		end
+	end
 
 	self.anim[self.state]:update(dt)
 	self.anim["attack"]:update(dt)
@@ -133,7 +149,7 @@ function Player:show()
 	self.anim[self.state]:draw(self.anim_db[self.state].image,
 							   Player.pos.x, Player.pos.y, 
 							   Player.rot, Player.scale, Player.scale,
-							   8, 12)
+							   Player.offset.x, Player.offset.y)
 	local flip_v = 1
 	if self.attack_rot == 0 or math.abs(self.attack_rot) == 0.785 then
 		flip_v = -1

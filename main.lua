@@ -12,6 +12,8 @@ function love.load()
 	love.window.setMode(screen.size.w, screen.size.h)
 	love.graphics.setDefaultFilter(screen.filter)
 	Player:loadAnimations()
+	Player:col_init()
+
 	init_enemy_anims()
 
 	for i=0,10 do
